@@ -10,5 +10,12 @@ defmodule Alcmaeon.Note do
     module
     |> cast(params, [:text])
     |> validate_required([:text])
+    |> validate_length(:text, min: 1, max: 120)
+  end
+
+  def apply(params) do
+    %Alcmaeon.Note{}
+    |> changeset(params)
+    |> apply_action(:apply)
   end
 end

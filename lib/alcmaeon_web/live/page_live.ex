@@ -1,6 +1,7 @@
 defmodule AlcmaeonWeb.PageLive do
   use AlcmaeonWeb, :live_view
   alias Phoenix.PubSub
+  alias Alcmaeon.Note
 
   @impl true
   def mount(_params, _session, socket) do
@@ -14,18 +15,22 @@ defmodule AlcmaeonWeb.PageLive do
      assign(socket,
        modal: true,
        modal_for: Map.get(values, "id", :root),
-       changeset: Alcmaeon.Note.changeset()
+       changeset: Note.changeset()
      )}
   end
 
   @impl true
   def handle_event(
         "save",
-        %{"note" => %{"text" => text}},
+        %{"note" => note_params},
         %{assigns: %{modal_for: parent}} = socket
       ) do
-    Alcmaeon.add_note(parent, text)
-    {:noreply, assign(socket, modal: false)}
+    with {:ok, %{text: text}} <- Note.apply(note_params) do
+      Alcmaeon.add_note(parent, text)
+      {:noreply, assign(socket, modal: false)}
+    else
+      {:error, changeset} -> {:noreply, assign(socket, changeset: changeset)}
+    end
   end
 
   @impl true

@@ -4,6 +4,7 @@
     phx_submit: "save" %>
 
   Note: <%= text_input f, :text %>
+  <%= error_tag f, :text %>
 
     <%= submit "Save", phx_disable_with: "Saving..." %>
 <% end %>
