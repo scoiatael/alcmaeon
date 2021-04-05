@@ -74,3 +74,13 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :libcluster,
+  topologies: [
+    epmd_example: [
+      strategy: Elixir.Cluster.Strategy.Epmd,
+      config: [
+        hosts: [:"fra@127.0.0.1", :"ams@127.0.0.1"]
+      ]
+    ]
+  ]

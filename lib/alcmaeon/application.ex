@@ -8,7 +8,7 @@ defmodule Alcmaeon.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      Alcmaeon.Repo,
+      # Alcmaeon.Repo,
       # Start the Telemetry supervisor
       AlcmaeonWeb.Telemetry,
       # Start the PubSub system
@@ -16,7 +16,13 @@ defmodule Alcmaeon.Application do
       # Start the Endpoint (http/https)
       AlcmaeonWeb.Endpoint,
       # Start a worker by calling: Alcmaeon.Worker.start_link(arg)
-      Alcmaeon.Script
+      Alcmaeon.Script,
+      FlyioLibcluster.Region,
+      {Cluster.Supervisor,
+       [
+         Application.get_env(:libcluster, :topologies),
+         [name: FlyioLibcluster.ClusterSupervisor]
+       ]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
