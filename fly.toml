@@ -2,7 +2,7 @@
 
 app = "floral-flower-8496"
 
-kill_signal = "SIGINT"
+kill_signal = "SIGTERM"
 kill_timeout = 5
 
 [[services]]
