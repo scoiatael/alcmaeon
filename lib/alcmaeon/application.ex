@@ -24,7 +24,7 @@ defmodule Alcmaeon.Application do
            Application.get_env(:libcluster, :topologies),
            [name: FlyioLibcluster.ClusterSupervisor]
          ]}
-      ] ++ maybe_script()
+      ] ++ maybe_script() ++ [Alcmaeon.Stage]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

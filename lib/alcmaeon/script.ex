@@ -18,7 +18,28 @@ defmodule Alcmaeon.Script do
   def topic, do: "alcmaeon_script_notes"
 
   @impl true
-  def init(state) do
+  def init(initial_state) do
+    # Required for multi_call in Stage.get_initial_state/0
+    Process.register(self(), Alcmaeon.Script)
+
+    {all_replies, bad_nodes} = GenServer.multi_call(Node.list(), Alcmaeon.Stage, :get, 5000)
+    replies = Enum.filter(all_replies, fn {_, v} -> v != :empty end)
+
+    state =
+      if Enum.empty?(replies) do
+        Logger.warn("""
+        Script: no replica state received;
+          got bad replies from #{inspect(bad_nodes)}
+          and empty ones #{inspect(all_replies)}
+        """)
+
+        initial_state
+      else
+        Logger.info("Script: received initial state: #{inspect(replies)}")
+        [{_node, value} | _] = replies
+        value
+      end
+
     {:ok, state}
   end
 
@@ -34,7 +55,7 @@ defmodule Alcmaeon.Script do
         end)
       )
 
-    PubSub.broadcast(Alcmaeon.PubSub, topic(), {:notes, view(new_state)})
+    PubSub.broadcast(Alcmaeon.PubSub, topic(), {:notes, new_state})
     {:noreply, new_state}
   end
 
@@ -43,26 +64,10 @@ defmodule Alcmaeon.Script do
     # NOTE: Compaction in :add takes care of obsolete children. Is it sound?
     new_state = Map.delete(state, id)
 
-    PubSub.broadcast(Alcmaeon.PubSub, topic(), {:notes, view(new_state)})
+    PubSub.broadcast(Alcmaeon.PubSub, topic(), {:notes, new_state})
     {:noreply, new_state}
   end
 
   @impl true
-  def handle_call(:get, _from, state), do: {:reply, view(state), state}
-
-  defp view(state), do: unfold(state, :root)[:children]
-
-  defp unfold(state, id) do
-    if Map.has_key?(state, id) do
-      children = Keyword.get(state[id], :children, [])
-
-      %{
-        text: Keyword.get(state[id], :text),
-        children: Enum.map(children, &unfold(state, &1)),
-        id: id
-      }
-    else
-      nil
-    end
-  end
+  def handle_call(:get, _from, state), do: {:reply, state, state}
 end

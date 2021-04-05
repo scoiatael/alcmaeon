@@ -1,7 +1,7 @@
 defmodule AlcmaeonWeb.PageLive do
   use AlcmaeonWeb, :live_view
   alias Phoenix.PubSub
-  alias Alcmaeon.Note
+  alias Alcmaeon.{Note, Stage}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -41,7 +41,7 @@ defmodule AlcmaeonWeb.PageLive do
 
   @impl true
   def handle_info({:notes, notes}, socket) do
-    {:noreply, assign(socket, notes: notes)}
+    {:noreply, assign(socket, notes: Stage.view(notes))}
   end
 
   def render_notes(assigns) do

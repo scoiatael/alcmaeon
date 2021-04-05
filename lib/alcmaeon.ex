@@ -7,19 +7,25 @@ defmodule Alcmaeon do
   if it comes from the database, an external API or others.
   """
 
-  @name {:global, Alcmaeon.Script}
+  @script {:global, Alcmaeon.Script}
+  @stage Alcmaeon.Stage
 
   alias Ecto.UUID
 
-  def add_note(id \\ UUID.generate(), pid \\ @name, parent, text) do
+  def add_note(id \\ UUID.generate(), pid \\ @script, parent, text) do
     GenServer.cast(pid, {:add, parent, id, text})
   end
 
-  def remove_note(pid \\ @name, id) do
+  def remove_note(pid \\ @script, id) do
     GenServer.cast(pid, {:remove, id})
   end
 
-  def list_notes(pid \\ @name) do
-    GenServer.call(pid, :get)
+  def list_notes(pid \\ @stage) do
+    with :empty <- GenServer.call(pid, :get) do
+      # NOTE: We choose strong consistency here by failing to return a reply instead of defaulting to empty list
+      raise "Stage returned empty response"
+    else
+      notes -> notes
+    end
   end
 end
