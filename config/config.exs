@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :alcmaeon,
-  ecto_repos: [Alcmaeon.Repo]
+  ecto_repos: [Alcmaeon.Repo],
+  script_region: "fra"
 
 # Configures the endpoint
 config :alcmaeon, AlcmaeonWeb.Endpoint,

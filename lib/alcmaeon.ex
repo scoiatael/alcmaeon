@@ -7,7 +7,7 @@ defmodule Alcmaeon do
   if it comes from the database, an external API or others.
   """
 
-  @name Alcmaeon.Script
+  @name {:global, Alcmaeon.Script}
 
   alias Ecto.UUID
 

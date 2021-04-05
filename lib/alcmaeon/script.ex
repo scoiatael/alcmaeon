@@ -2,9 +2,10 @@ defmodule Alcmaeon.Script do
   use GenServer
 
   alias Phoenix.PubSub
+  require Logger
 
   @initial %{root: [children: []]}
-  @name Alcmaeon.Script
+  @name {:global, Alcmaeon.Script}
 
   def start_link(opts) do
     GenServer.start_link(

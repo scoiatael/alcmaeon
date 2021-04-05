@@ -30,3 +30,11 @@ config :libcluster,
       config: []
     ]
   ]
+
+config :logger,
+  level: :info,
+  truncate: 4096
+
+config :alcmaeon,
+  ecto_repos: [Alcmaeon.Repo],
+  script_region: System.fetch_env!("SCRIPT_REGION")
