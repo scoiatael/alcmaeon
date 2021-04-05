@@ -18,4 +18,8 @@ defmodule Alcmaeon do
   def remove_note(pid \\ @name, id) do
     GenServer.cast(pid, {:remove, id})
   end
+
+  def list_notes(pid \\ @name) do
+    GenServer.call(pid, :get)
+  end
 end
