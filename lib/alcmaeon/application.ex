@@ -14,9 +14,9 @@ defmodule Alcmaeon.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Alcmaeon.PubSub},
       # Start the Endpoint (http/https)
-      AlcmaeonWeb.Endpoint
+      AlcmaeonWeb.Endpoint,
       # Start a worker by calling: Alcmaeon.Worker.start_link(arg)
-      # {Alcmaeon.Worker, arg}
+      Alcmaeon.Script
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
